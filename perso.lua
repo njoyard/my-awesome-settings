@@ -67,7 +67,7 @@ bat_options = {
 script_path = '~/.config/awesome/scripts/'
 clock_format = " %a %d %b <span font='bold'>%H:%M</span> "
 tags = {
-    nnames  = { "work", "web", "comm", "subl", 5, 6, 7, "pers", "pweb" }    
+    names  = { "work", "web", "comm", "subl", 5, 6, 7, "pers", "pweb" }
 }
 
 -- }}}
@@ -113,7 +113,10 @@ function get_widgets()
 
     -- Batteries
     container:add(battery.widget(bat_options))
-    
+
+    -- Clock
+    container:add(awful.widget.textclock(clock_format))
+
     return container
 end
 
