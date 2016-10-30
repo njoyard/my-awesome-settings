@@ -82,7 +82,7 @@ end
 tags = perso.tags
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag(tags.names, s, layouts[1])
+    tags[s] = awful.tag(tags.names[s], s, layouts[1])
 end
 -- }}}
 
@@ -160,36 +160,26 @@ mytasklist.buttons = awful.util.table.join(
                                               if client.focus then client.focus:raise() end
                                           end))
 
-for s = 1, screen.count() do
-    -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt()
-    -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+-- Bar on screen 1
+-- {{{
 
-    -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+mypromptbox = awful.widget.prompt()
+mytaglist = awful.widget.taglist(1, awful.widget.taglist.filter.all, mytaglist.buttons)
+mytasklist = awful.widget.tasklist(1, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+mywibox = awful.wibox({ position = "bottom", height = perso.statusbar_height, screen = 1 })
 
-    -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", height = perso.statusbar_height, screen = s })
+local left_layout = wibox.layout.fixed.horizontal()
+left_layout:add(mytaglist)
+left_layout:add(mypromptbox)
+local right_layout = wibox.layout.fixed.horizontal()
+right_layout:add(wibox.widget.systray())
+right_layout:add(perso.get_widgets())
+local layout = wibox.layout.align.horizontal()
+layout:set_left(left_layout)
+layout:set_middle(mytasklist[s])
+layout:set_right(right_layout)
 
-    -- Widgets that are aligned to the left
-    local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(mytaglist[s])
-    left_layout:add(mypromptbox[s])
-
-    -- Widgets that are aligned to the right
-    local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(perso.get_widgets())
-
-    -- Now bring it all together (with the tasklist in the middle)
-    local layout = wibox.layout.align.horizontal()
-    layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
-    layout:set_right(right_layout)
-
-    mywibox[s]:set_widget(layout)
-end
+mywibox:set_widget(layout)
 -- }}}
 
 -- {{{ Mouse bindings
@@ -250,12 +240,12 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
+    awful.key({ modkey },            "r",     function () mypromptbox:run() end),
 
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
-                  mypromptbox[mouse.screen].widget,
+                  mypromptbox.widget,
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
               end),
@@ -291,8 +281,7 @@ for i = 1, 9 do
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
-                        local screen = mouse.screen
-                        local tag = awful.tag.gettags(screen)[i]
+                        local tag = awful.tag.gettags(1)[i]
                         if tag then
                            awful.tag.viewonly(tag)
                         end
@@ -300,8 +289,7 @@ for i = 1, 9 do
         -- Toggle tag.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
-                      local screen = mouse.screen
-                      local tag = awful.tag.gettags(screen)[i]
+                      local tag = awful.tag.gettags(1)[i]
                       if tag then
                          awful.tag.viewtoggle(tag)
                       end

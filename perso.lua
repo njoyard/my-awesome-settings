@@ -8,8 +8,18 @@ local battery = require('battery')
 local volume = require('volume')
 local network = require('network')
 local backlight = require('backlight')
+local shutdown = require('shutdown')
+local redshift = require("redshift")
 
 module('perso')
+
+-- Redshift
+-- {{{
+
+redshift.options = "-c ~/.config/redshift.conf"
+
+--- }}}
+
 
 -- Theme
 -- {{{
@@ -46,6 +56,8 @@ network_font = '6'
 connected_color = '#00bb88'
 disconnected_color = '#bb0000'
 
+logout_color = '#cc3333'
+
 -- }}}
 
 
@@ -67,7 +79,13 @@ bat_options = {
 script_path = '~/.config/awesome/scripts/'
 clock_format = " %a %d %b <span font='bold'>%H:%M</span> "
 tags = {
-    names  = { "work", "web", "comm", "subl", 5, 6, 7, "pers", "pweb" }
+    names  = {
+        -- main screen
+        { "work", "web", "irc", "subl", 5, 6, "mail", "pers", "pweb" },
+
+        -- secondary screen
+        { 1 }
+    }
 }
 
 -- }}}
@@ -117,6 +135,9 @@ function get_widgets()
     -- Clock
     container:add(awful.widget.textclock(clock_format))
 
+    -- Logout button
+    -- container:add(shutdown.widget(logout_color, script_path))
+
     return container
 end
 
@@ -132,7 +153,8 @@ keys = awful.util.table.join(
     awful.key({}, 'XF86AudioLowerVolume', volume.decrease),
     awful.key({}, 'XF86AudioMicMute', volume.toggle_mic),
     awful.key({}, 'XF86MonBrightnessDown', backlight.decrease),
-    awful.key({}, 'XF86MonBrightnessUp', backlight.increase)
+    awful.key({}, 'XF86MonBrightnessUp', backlight.increase),
+    awful.key({}, 'XF86Explorer', shutdown.show_dialog(script_path))
 )
 
 -- }}}
@@ -142,4 +164,5 @@ keys = awful.util.table.join(
 bashets.set_script_path(script_path)
 utils.setup(vbars_width, statusbar_height, beautiful.bg_normal)
 volume.setup(vol_bg, vol_fg, muted_bg, muted_fg)
+redshift.init(1)
 

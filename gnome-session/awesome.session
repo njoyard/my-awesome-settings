@@ -1,0 +1,5 @@
+[GNOME Session]
+Name=Awesome session
+RequiredComponents=awesome;gnome-settings-daemon;
+DesktopName=Awesome
+
