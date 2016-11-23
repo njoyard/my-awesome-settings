@@ -3,6 +3,8 @@
 --
 -- https://github.com/YoRyan/awesome-redshift
 --
+-- Slightly modified by njoyard
+--
 
 -- standard libraries
 local awful = require("awful")
@@ -57,7 +59,9 @@ redshift.toggle = function()
         redshift.dim()
     end
 end
-redshift.init = function(initState)
+redshift.init = function(options, initState)
+    redshift.options = options
+
     if initState == 1
     then
         redshift.dim()

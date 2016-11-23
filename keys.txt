@@ -1,0 +1,12 @@
+XF86AudioMute
+XF86AudioLowerVolume
+XF86AudioRaiseVolume
+XF86AudioMicMute
+XF86MonBrightnessDown
+XF86MonBrightnessUp
+XF86Display
+XF86WLAN
+XF86Tools
+XF86Search
+XF86LaunchA
+XF86Explorer
